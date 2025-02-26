@@ -4,6 +4,7 @@ using TodoApi.Data;
 using TodoApi.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TodoApi.Controllers
 {
@@ -19,6 +20,7 @@ namespace TodoApi.Controllers
         }
 
         // GET: api/tag
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Tag>>> GetTags()
         {
@@ -26,6 +28,7 @@ namespace TodoApi.Controllers
         }
 
         // GET: api/tag/5
+        [Authorize]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Tag>> GetTag(int id)
         {
@@ -38,6 +41,7 @@ namespace TodoApi.Controllers
         }
 
         // POST: api/tag
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<Tag>> PostTag([FromBody] Tag tag)
         {
@@ -53,6 +57,7 @@ namespace TodoApi.Controllers
         }
 
         // PUT: api/tag/5
+        [Authorize]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> PutTag(int id, [FromBody] Tag tag)
         {
@@ -74,6 +79,7 @@ namespace TodoApi.Controllers
         }
 
         // DELETE: api/tag/5
+        [Authorize]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteTag(int id)
         {

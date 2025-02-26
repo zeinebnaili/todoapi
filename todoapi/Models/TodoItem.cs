@@ -5,6 +5,7 @@ namespace TodoApi.Models
     public class TodoItem
     {
         public int Id { get; set; } // Utilisation de int pour l'ID (EF Core gère l'auto-incrémentation)
+        
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public DateTime Deadline { get; set; }

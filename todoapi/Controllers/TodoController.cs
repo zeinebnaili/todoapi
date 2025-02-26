@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TodoApi.Data;
 using TodoApi.Models;
@@ -11,45 +12,32 @@ namespace TodoApi.Controllers
     {
         private readonly TodoContext _context;
 
-        // Constructeur : injection du contexte de la base de données
         public TodoController(TodoContext context)
         {
             _context = context;
         }
 
-        // GET: api/todo
-        // Récupère la liste de toutes les tâches
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodos()
         {
             return await _context.TodoItems.ToListAsync();
         }
 
-        // GET: api/todo/5
-        // Récupère une tâche spécifique par son ID
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<TodoItem>> GetTodoItem(int id)
         {
             var todoItem = await _context.TodoItems.FindAsync(id);
-
-            if (todoItem == null)
-            {
-                return NotFound();
-            }
-
+            if (todoItem == null) return NotFound();
             return todoItem;
         }
 
-        // POST: api/todo
-        // Ajoute une nouvelle tâche
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<TodoItem>> PostTodoItem([FromBody] TodoItem todoItem)
         {
-            
-            if (todoItem == null)
-            {
-                return BadRequest("Données invalides");
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             _context.TodoItems.Add(todoItem);
             await _context.SaveChangesAsync();
@@ -57,16 +45,11 @@ namespace TodoApi.Controllers
             return CreatedAtAction(nameof(GetTodoItem), new { id = todoItem.Id }, todoItem);
         }
 
-
-        // PUT: api/todo/5
-        // Met à jour une tâche existante par son ID
+        [Authorize]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTodoItem(int id, TodoItem todoItem)
+        public async Task<IActionResult> PutTodoItem(int id, [FromBody] TodoItem todoItem)
         {
-            if (id != todoItem.Id)
-            {
-                return BadRequest();
-            }
+            if (id != todoItem.Id) return BadRequest("ID mismatch");
 
             _context.Entry(todoItem).State = EntityState.Modified;
             await _context.SaveChangesAsync();
@@ -74,16 +57,12 @@ namespace TodoApi.Controllers
             return NoContent();
         }
 
-        // DELETE: api/todo/5
-        // Supprime une tâche par son ID
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTodoItem(int id)
         {
             var todoItem = await _context.TodoItems.FindAsync(id);
-            if (todoItem == null)
-            {
-                return NotFound();
-            }
+            if (todoItem == null) return NotFound();
 
             _context.TodoItems.Remove(todoItem);
             await _context.SaveChangesAsync();
